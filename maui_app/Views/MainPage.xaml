@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TerraGuard.Maui.ViewModels"
+             x:Class="TerraGuard.Maui.Views.MainPage"
+             Title="TerraGuard AI"
+             BackgroundColor="#0B0F19">
+
+    <ContentPage.BindingContext>
+        <vm:MainViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="Auto, *, Auto">
+
+        <!-- Top Operational Header Bar -->
+        <Border Grid.Row="0" BackgroundColor="#111827" Padding="16,12" StrokeThickness="0">
+            <Grid ColumnDefinitions="*, Auto">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="TerraGuard AI" FontSize="20" FontAttributes="Bold" TextColor="White" />
+                        <Border BackgroundColor="#064E3B" Padding="8,2" StrokeThickness="0" CornerRadius="8">
+                            <Label Text="LIVE MAUI-FIREBASE" FontSize="10" FontAttributes="Bold" TextColor="#34D399" />
+                        </Border>
+                    </HorizontalStackLayout>
+                    <Label Text="All-Models Landslide Early Warning &amp; Mobile GIS" FontSize="12" TextColor="#9CA3AF" />
+                </VerticalStackLayout>
+
+                <!-- SOS Dispatch Button -->
+                <Button Grid.Column="1"
+                        Text="🚨 SOS DISPATCH"
+                        BackgroundColor="#DC2626"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="12"
+                        CornerRadius="10"
+                        Padding="14,8"
+                        Command="{Binding TriggerSOSCommand}" />
+            </Grid>
+        </Border>
+
+        <!-- Main Screen Body Content -->
+        <ScrollView Grid.Row="1" Padding="16">
+            <VerticalStackLayout Spacing="16">
+
+                <!-- Active Alert Banner -->
+                <Border BackgroundColor="#7F1D1D" Stroke="#EF4444" StrokeThickness="1" CornerRadius="12" Padding="12"
+                        IsVisible="{Binding ActiveCriticalCount, Converter={StaticResource IntToBoolConverter}}">
+                    <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                        <Label Text="⚠️ CRITICAL LANDSLIDE WARNING:" FontAttributes="Bold" TextColor="White" FontSize="12" />
+                        <Label Text="{Binding ActiveCriticalCount, StringFormat='{0} IoT Stations Report Imminent Hazard'}" TextColor="#FECACA" FontSize="12" />
+                    </HorizontalStackLayout>
+                </Border>
+
+                <!-- Selected Station Risk Score Card -->
+                <Border BackgroundColor="#111827" Stroke="{Binding CurrentPrediction.ThreatColorHex}" StrokeThickness="2" CornerRadius="16" Padding="16">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Text="{Binding SelectedStation.Name, StringFormat='STATION: {0}'}" FontSize="11" TextColor="#9CA3AF" FontAutoScalingEnabled="True" />
+                                <Label Text="{Binding SelectedStation.Region, StringFormat='{0}, {1}'}" FontSize="14" FontAttributes="Bold" TextColor="White" />
+                            </VerticalStackLayout>
+                            <Border Grid.Column="1" BackgroundColor="{Binding CurrentPrediction.ThreatColorHex}" Padding="12,4" CornerRadius="12" StrokeThickness="0">
+                                <Label Text="{Binding CurrentPrediction.Threat}" TextColor="White" FontAttributes="Bold" FontSize="12" CharacterSpacing="1" />
+                            </Border>
+                        </Grid>
+
+                        <!-- Risk Score Gauge Display -->
+                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="12" Margin="0,8">
+                            <Border BackgroundColor="#0B0F19" WidthRequest="110" HeightRequest="110" CornerRadius="55" Stroke="{Binding CurrentPrediction.ThreatColorHex}" StrokeThickness="6">
+                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                                    <Label Text="{Binding CurrentPrediction.RiskScore}" FontSize="36" FontAttributes="Bold" TextColor="{Binding CurrentPrediction.ThreatColorHex}" HorizontalOptions="Center" />
+                                    <Label Text="HAZARD PTS" FontSize="9" TextColor="#9CA3AF" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <!-- Consensus & Time to Slide Info -->
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
+                            <Border Grid.Column="0" BackgroundColor="#0B0F19" Padding="10" CornerRadius="10">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="INTER-MODEL CONSENSUS" FontSize="9" TextColor="#9CA3AF" />
+                                    <Label Text="{Binding CurrentPrediction.ConsensusAgreement, StringFormat='{0}% Agreement'}" FontSize="12" FontAttributes="Bold" TextColor="#34D399" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1" BackgroundColor="#0B0F19" Padding="10" CornerRadius="10">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="ESTIMATED TIME TO SLIDE" FontSize="9" TextColor="#9CA3AF" />
+                                    <Label Text="{Binding CurrentPrediction.EstimatedTimeToSlide}" FontSize="11" FontAttributes="Bold" TextColor="#FBBF24" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Model Selector Tabs -->
+                <Label Text="SELECT AI / PHYSICS MODEL:" FontSize="11" FontAttributes="Bold" TextColor="#06B6D4" Margin="0,4,0,0" />
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                    <HorizontalStackLayout Spacing="8">
+                        <Button Text="All Models Ensemble" Command="{Binding ChangeAIModelCommand}" CommandParameter="ensemble" BackgroundColor="#06B6D4" TextColor="White" FontSize="11" CornerRadius="8" Padding="12,6" />
+                        <Button Text="PINN Physics (FoS)" Command="{Binding ChangeAIModelCommand}" CommandParameter="pinn" BackgroundColor="#1E293B" TextColor="#9CA3AF" FontSize="11" CornerRadius="8" Padding="12,6" />
+                        <Button Text="XGBoost Trees" Command="{Binding ChangeAIModelCommand}" CommandParameter="xgboost" BackgroundColor="#1E293B" TextColor="#9CA3AF" FontSize="11" CornerRadius="8" Padding="12,6" />
+                        <Button Text="CNN-LSTM Temporal" Command="{Binding ChangeAIModelCommand}" CommandParameter="cnnlstm" BackgroundColor="#1E293B" TextColor="#9CA3AF" FontSize="11" CornerRadius="8" Padding="12,6" />
+                        <Button Text="Vision Transformer (ViT)" Command="{Binding ChangeAIModelCommand}" CommandParameter="vit" BackgroundColor="#1E293B" TextColor="#9CA3AF" FontSize="11" CornerRadius="8" Padding="12,6" />
+                        <Button Text="Hydrological (HSI)" Command="{Binding ChangeAIModelCommand}" CommandParameter="hsi" BackgroundColor="#1E293B" TextColor="#9CA3AF" FontSize="11" CornerRadius="8" Padding="12,6" />
+                    </HorizontalStackLayout>
+                </ScrollView>
+
+                <!-- Monitoring Stations List -->
+                <Label Text="MONITORED REGIONAL IOT STATIONS:" FontSize="11" FontAttributes="Bold" TextColor="#06B6D4" Margin="0,8,0,0" />
+                <CollectionView ItemsSource="{Binding Stations}" SelectionMode="Single">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border BackgroundColor="#111827" Margin="0,0,0,8" Padding="12" CornerRadius="12" StrokeThickness="1" Stroke="#1F2937">
+                                <Grid ColumnDefinitions="*, Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                        <Label Text="{Binding Name}" FontAttributes="Bold" TextColor="White" FontSize="13" />
+                                        <Label Text="{Binding Region, StringFormat='{0}, {1} • Slope: {2}°'}" FontSize="11" TextColor="#9CA3AF" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="End" Spacing="2">
+                                        <Label Text="{Binding RiskScore, StringFormat='{0} pts'}" FontAttributes="Bold" FontSize="14" TextColor="#F97316" HorizontalOptions="End" />
+                                        <Label Text="{Binding LastUpdated}" FontSize="9" TextColor="#6B7280" HorizontalOptions="End" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Native MAUI Bottom Tab Bar -->
+        <Border Grid.Row="2" BackgroundColor="#030712" Padding="8" StrokeThickness="0">
+            <Grid ColumnDefinitions="*, *, *, *, *">
+                <Button Grid.Column="0" Text="🗺️ Map" BackgroundColor="Transparent" TextColor="#06B6D4" FontSize="11" FontAttributes="Bold" />
+                <Button Grid.Column="1" Text="🧠 AI" BackgroundColor="Transparent" TextColor="#9CA3AF" FontSize="11" />
+                <Button Grid.Column="2" Text="📡 Sensors" BackgroundColor="Transparent" TextColor="#9CA3AF" FontSize="11" />
+                <Button Grid.Column="3" Text="🔔 Alerts" BackgroundColor="Transparent" TextColor="#9CA3AF" FontSize="11" />
+                <Button Grid.Column="4" Text="📋 Reports" BackgroundColor="Transparent" TextColor="#9CA3AF" FontSize="11" />
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>

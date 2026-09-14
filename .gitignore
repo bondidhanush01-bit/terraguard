@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+/.pnpm-store
+
+# Production Builds
+dist/
+build/
+.output/
+
+# Flutter / Dart
+.dart_tool/
+.pub-cache/
+.pub/
+/build/
+
+# Environment & Local Configuration
+.env
+.env.local
+.env.*.local
+*.log
+
+# IDE & OS Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.vs/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# .NET / C# MAUI Build Outputs
+bin/
+obj/
+*.user
+*.userosv
